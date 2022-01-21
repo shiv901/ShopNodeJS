@@ -1,0 +1,37 @@
+<%- include('../partials/head') %>
+<%- include('../partials/nav') %>
+
+<main>
+   <div class="centerxy">
+      <h1 class="display-5">My Products</h1>
+   </div>
+   <% if (products.length > 0) { %>
+      <div class="grid">
+         <% products.forEach(prod=> { %>
+            <article class="card product-item">
+               <header class="card__header">
+                  <h1 class="product__title"><%= prod.title %></h1>
+               </header>
+               <div class="card__image">
+                  <img src="<%= prod.imageUrl %> " alt="product Image">
+               </div>
+               <div class="card__content">
+                  <h2 class="product__price">$<%= prod.price %></h2>
+                  <p class="product__description"><%= prod.description %></p>
+               </div>
+               <div class="card__actions">
+                  <a href="/admin/edit" class="btn">Edit</a>
+                  <form action="/admin/delete" method="post">
+                      <button type="submit" class="btn">Delete</button>
+                  </form>
+               </div>
+            </article>
+         <% }) %>
+      </div>
+
+   <% }else { %>
+      <h1 class="text-center">No products in the list</h1>
+   <% } %>
+</main>
+
+<%- include('../partials/end')%>
