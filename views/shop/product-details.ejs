@@ -2,8 +2,16 @@
 <%- include('../partials/nav') %>
 
 <main>
-   <div class="centerxy">
+   <div class="centerxy text-center">
       <h1 class="display-5">Product details</h1>
+      <hr>
+      <div><img src="<%=prod.imageUrl %> " alt="product image"></div>
+      <h2><%=prod.price %> </h2>
+      <p><%=prod.description %></p>
+      <form action="/cart" method="post">
+         <button type="submit" class="btn">Add to Cart</button>
+         <input type="hidden" name="prodId" value="<%=prod.id %>" />
+      </form>
    </div>
   
 </main>
