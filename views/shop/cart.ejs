@@ -4,6 +4,22 @@
 <main>
    <div class="centerxy">
       <h1 class="display-5">My Cart</h1>
+      <% if (products.length > 0) { %>
+         <h5>Cart Total: $<%= products[0].totalPrice %></h5>
+         <ul>
+            <% products.forEach(p=> { %>
+               <li>
+                  <p class="d-inline-block h4"><%=p.productData.title %> [<%=p.qty%>] </>
+                  <form action="/cart/delete" method="post">
+                     <input type="hidden" name="id" value="<%=p.productData.id%>">
+                     <button type="submit" class="btn d-inline-block">Delete</button>
+                  </form>
+               </li>
+            <%})%>
+         </ul>
+      <% } else {%>
+         <h4>No Products in the Cart</h4>
+      <% } %>
    </div>
    
 </main>

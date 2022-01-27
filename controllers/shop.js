@@ -31,18 +31,36 @@ exports.getProducts = (req, res, next) => {
 }
 
 exports.getCart = (req, res, next) => {
-  res.render('shop/cart', {
-    pageTitle: 'Cart',
-    path: 'cart'
+  Cart.getCart(cart=>{
+    Product.fetchAll(products=>{
+      const cartProducts = [];
+      for (let product of products) {
+        let cartData = cart.products.find(p=>p.id === product.id);
+        if(cartData){
+          cartProducts.push({productData: product, qty: cartData.qty, totalPrice: cart.totalPrice});
+        }
+      }
+      res.render('shop/cart', {
+        pageTitle: 'Cart',
+        path: 'cart',
+        products: cartProducts,
+      })
+    })
   })
 }
 exports.postCart = (req, res, next) => {
   const prodId = req.body.prodId
   Product.findById(prodId, product => {
     Cart.addProduct(prodId, product.price)
-
   })
   res.redirect('/cart')
+}
+exports.postDeleteCart = (req, res, next) => {
+  const prodId = req.body.id
+  Product.findById(prodId, product => {
+    Cart.deleteProduct(prodId, product.price)
+    res.redirect('/cart')
+  })
 }
 
 exports.getOrders = (req, res, next) => {
