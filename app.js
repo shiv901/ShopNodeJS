@@ -6,6 +6,8 @@ const adminRouter = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 const errorsController = require('./controllers/errors')
 
+const sequelize = require('./utility/database')
+
 
 const app = express();
 
@@ -20,6 +22,9 @@ app.use(shopRoutes)
 
 app.use(errorsController.get404)
 
-
-app.listen(3000, ()=> console.log('Server running...'))
+sequelize.sync()
+  .then(()=>{
+    app.listen(3000, ()=> console.log('Server running...'))
+  })
+  .catch(err => console.log(err))
 
