@@ -4,6 +4,22 @@
 <main>
    <div class="centerxy">
       <h1 class="display-5">My Orders</h1>
+      <% if (orders.length > 0) { %>
+         <% orders.forEach(order => { %>
+            <% if (order.products.length > 0) { %>
+            <li>
+                  <h4>Order#<%=order.id%></h4>
+                  <ul>
+                     <% order.products.forEach(product => { %>
+                       <li><%=product.title %> (<%=product.quantity %>)</li>
+                     <% }) %>
+                  </ul>
+               </li>
+               <% } %>
+         <%})%>
+      <%}else{%>
+         <h2>No Orders here!</h2>
+      <%}%>
    </div>
    
 </main>

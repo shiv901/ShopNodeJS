@@ -11,14 +11,14 @@ exports.getIndex = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product.findAll()
-    .then(products=>{
+    .then(products => {
       res.render('shop/product-list', {
         pageTitle: 'All Products',
         products: products,
         path: 'products'
       })
     })
-    .catch(err=>console.log(err))
+    .catch(err => console.log(err))
 }
 
 exports.getProduct = (req, res, next) => {
@@ -36,16 +36,16 @@ exports.getProduct = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   req.user.getCart()
-    .then(cart=>{
+    .then(cart => {
       return cart.getProducts()
-                  .then(products => {
-                    res.render('shop/cart', {
-                      pageTitle: 'Cart',
-                      path: 'cart',
-                      products: products,
-                    })
-                  })
-                  .catch(err => console.log(err))
+        .then(products => {
+          res.render('shop/cart', {
+            pageTitle: 'Cart',
+            path: 'cart',
+            products: products,
+          })
+        })
+        .catch(err => console.log(err))
     })
     .catch(err => console.log(err))
 }
@@ -55,25 +55,26 @@ exports.postCart = (req, res, next) => {
   let newQuantity = 1;
 
   req.user.getCart()
-    .then(cart=>{
+    .then(cart => {
       fetchedCart = cart
-      return cart.getProducts({where: {id: prodId}})
+      return cart.getProducts({ where: { id: prodId } })
     })
-    .then(products =>{
+    .then(products => {
       let product;
-      if(products.length > 0){
+      if (products.length > 0) {
         product = products[0];
       }
-      if(product){
-        newQuantity = product.cartItem.quantity  + 1 
+      if (product) { 
+        // console.log(product.cartItem.quantity)
+        newQuantity = product.cartItem.quantity + 1
         return product
       }
       return Product.findByPk(prodId)
     })
-    .then(product=> {
-      return fetchedCart.addProduct(product, {through : {quantity: newQuantity}})
+    .then(product => {
+      return fetchedCart.addProduct(product, { through: { quantity: newQuantity } })
     })
-    .then(()=>{
+    .then(() => {
       res.redirect('/cart')
     })
     .catch(err => console.log(err))
@@ -85,29 +86,60 @@ exports.postCart = (req, res, next) => {
 exports.postDeleteCart = (req, res, next) => {
   const prodId = req.body.prodId
   req.user.getCart()
-    .then(cart=>{
-      return cart.getProducts({where: {id: prodId}})
+    .then(cart => {
+      return cart.getProducts({ where: { id: prodId } })
     })
-    .then(products=>{
+    .then(products => {
       let product = products[0]
       return product.cartItem.destroy()
     })
-    .then(()=>{
+    .then(() => {
       res.redirect('/cart')
+    })
+    .catch(err => console.log(err))
+}
+
+exports.getOrders = (req, res, next) => {
+  req.user.getOrders({include: ['products']})
+    .then(orders=>{
+      res.render('shop/orders', {
+        pageTitle: 'My Orders',
+        path: 'orders', 
+        orders: orders
+      })    
     })
     .catch(err=>console.log(err))
 }
 
-exports.getOrders = (req, res, next) => {
-  res.render('shop/orders', {
-    pageTitle: 'My Orders',
-    path: 'orders'
-  })
+exports.postCreateOrder = (req, res, next) => {
+  let fetchedCart;
+  req.user.getCart()
+    .then(cart => {
+      fetchedCart = cart
+      return cart.getProducts()
+    })
+    .then(products => {
+      return req.user.createOrder()
+        .then(order => {
+          order.addProducts(products.map(product => {
+            product.orderItem = { quantity: product.cartItem.quantity }
+            return product
+          }))
+        })
+        .catch(err => console.log(err))
+    })
+    .then(result => {
+      return fetchedCart.setProducts(null)
+    })
+    .then(()=>{
+      res.redirect('/orders')
+    })
+    .catch(err => console.error(err))
 }
 
 exports.getCheckout = (req, res, next) => {
-  res.render('shop/checkout', {
-    pageTitle: 'checkout',
-    path: 'checkout'
-  })
+    res.render('shop/checkout', {
+      pageTitle: 'checkout',
+      path: 'checkout'
+    })
 }
