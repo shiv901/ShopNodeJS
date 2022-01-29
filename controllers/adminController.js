@@ -2,7 +2,7 @@ const Product = require('../models/Product')
 
 /* ------------------------------ Get Products ------------------------------ */
 exports.getProducts = (req, res, next) => {
-  Product.findAll()
+  req.user.getProducts()
     .then(products=>{
       res.render('admin/products', {
         pageTitle: 'Admin Products',
@@ -23,7 +23,8 @@ exports.getAddProduct = (req, res, next) => {
 }
 exports.postAddProduct = (req, res, next) => {
   const {title, description, price, imageUrl} = req.body
-  Product.create({title, price, imageUrl, description})
+  req.user
+    .createProduct({title, price, imageUrl, description})
     .then(() => {
       res.redirect('/products')
     })
