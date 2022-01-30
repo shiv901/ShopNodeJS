@@ -1,29 +1,17 @@
-const Cart = require('../models/Cart')
 const Product = require('../models/Product')
 
-
+/* ------------------------------- Index Page ------------------------------- */
 exports.getIndex = (req, res, next) => {
   res.render('shop/index', {
-    pageTitle: 'Shop',
+    pageTitle: 'Shop || Home Page',
     path: '/'
   })
 }
 
-exports.getProducts = (req, res, next) => {
-  Product.findAll()
-    .then(products => {
-      res.render('shop/product-list', {
-        pageTitle: 'All Products',
-        products: products,
-        path: 'products'
-      })
-    })
-    .catch(err => console.log(err))
-}
-
+/* ------------------------------ Get Products ------------------------------ */
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.prodId
-  Product.findByPk(prodId)
+  Product.findById(prodId)
     .then((product) => {
       res.render('shop/product-details', {
         product: product,
@@ -34,6 +22,19 @@ exports.getProduct = (req, res, next) => {
     .catch(err => console.log(err))
 }
 
+exports.getProducts = (req, res, next) => {
+  Product.fetchAll()
+    .then(products => {
+      res.render('shop/product-list', {
+        pageTitle: 'All Products',
+        products: products,
+        path: 'products'
+      })
+    })
+    .catch(err => console.log(err))
+}
+
+/* ---------------------------- Get Cart Details ---------------------------- */
 exports.getCart = (req, res, next) => {
   req.user.getCart()
     .then(cart => {
@@ -65,7 +66,6 @@ exports.postCart = (req, res, next) => {
         product = products[0];
       }
       if (product) { 
-        // console.log(product.cartItem.quantity)
         newQuantity = product.cartItem.quantity + 1
         return product
       }
@@ -99,6 +99,7 @@ exports.postDeleteCart = (req, res, next) => {
     .catch(err => console.log(err))
 }
 
+/* ------------------------------ Order Details ----------------------------- */
 exports.getOrders = (req, res, next) => {
   req.user.getOrders({include: ['products']})
     .then(orders=>{
