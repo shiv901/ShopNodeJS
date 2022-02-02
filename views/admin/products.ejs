@@ -2,8 +2,8 @@
 <%- include('../partials/nav') %>
 
 <main>
-   <div class="centerxy">
-      <h1 class="display-5">My Products</h1>
+   <div class="centered">
+      <h1 class="display-5 mb-3">My Producrs</h1>
    </div>
    <% if (products.length > 0) { %>
       <div class="grid">
@@ -30,7 +30,7 @@
          <% }) %>
       </div>
 
-   <% }else { %>
+   <% } else { %>
       <h1 class="text-center">No products in the list</h1>
    <% } %>
 </main>

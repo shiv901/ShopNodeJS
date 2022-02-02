@@ -5,17 +5,15 @@
    <div class="centerxy">
       <h1 class="display-5">My Orders</h1>
       <% if (orders.length > 0) { %>
-         <% orders.forEach(order => { %>
-            <% if (order.products.length > 0) { %>
-            <li>
-                  <h4>Order#<%=order.id%></h4>
+         <% orders.forEach((order,i) => { %>
+               <li>
+                  <h5>Order#<%=i+1%></h5>
                   <ul>
-                     <% order.products.forEach(product => { %>
-                       <li><%=product.title %> (<%=product.quantity %>)</li>
+                     <% order.items.forEach(product => { %>
+                       <li><%=product.title %> x<%=product.quantity %></li>
                      <% }) %>
                   </ul>
                </li>
-               <% } %>
          <%})%>
       <%}else{%>
          <h2>No Orders here!</h2>
