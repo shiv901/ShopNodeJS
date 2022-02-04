@@ -6,7 +6,7 @@ const adminRouter = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 const errorsController = require('./controllers/errors')
 
-const {mongoConnect} = require('./utility/database');
+const mongoose = require('mongoose')
 const User = require('./models/User');
 
 
@@ -20,9 +20,9 @@ app.use(bodyParser.urlencoded({ extended:false }))
 
 /* ----------------- Adding Temp User ----------------- */
 app.use((req, res, next) => {
-  User.findById('61f5bf3e4dfdf98e06e44fe3')
+  User.findById('61faf11b48a18ab9b1db108e')
     .then(user=>{
-      req.user = new User(user.name, user.email, user.cart, user._id);
+      req.user = user
       next()
     })
     .catch(err => console.log(err))
@@ -34,6 +34,20 @@ app.use(shopRoutes)
 
 app.use(errorsController.get404)
 
-mongoConnect(()=>{
-  app.listen(3000, ()=> console.log('Server running...'))
-})
+mongoose.connect('mongodb://localhost:27017/Eshop?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
+  .then(()=>{
+    User.findOne().then(user => {
+      if(!user) {
+        const user = new User({
+          name: 'John',
+          email: 'john@gmail.com',
+          cart: {
+            items: []
+          }
+        })
+        user.save()
+      }
+    })
+    app.listen(3000, ()=> console.log('Server running...'))
+  })
+  .catch(err => console.log(err))

@@ -25,3 +25,7 @@
 .product__description {
     text-align: center;
 }
+
+span small{
+    font-size: 0.6rem;
+}
